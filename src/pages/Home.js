@@ -11,14 +11,17 @@ class Home extends Component {
         search: "",
         name: [],
         results: [],
-        employees: {},
+        employees: [{}],
         error: ""
     };
 
     // When the component mounts, get a list of all available base breeds and update this.state.breeds
     componentDidMount() {
-        API.getUser()
-            .then(res => this.setState({ employees: res.data.message }))
+        API.getEmployees()
+            .then(res => {
+                console.log(res.data.results);
+                this.setState({ employees: res.data.results })
+            })
             .catch(err => console.log(err));
     }
 
@@ -28,7 +31,7 @@ class Home extends Component {
 
     handleFormSubmit = event => {
         event.preventDefault();
-        API.getUser(this.state.search)
+        API.getEmployees(this.state.search)
             .then(res => {
                 if (res.data.status === "error") {
                     throw new Error(res.data.message);
@@ -45,18 +48,12 @@ class Home extends Component {
                 </Hero>
                 <Container style={{ minHeight: "80%" }}>
                     <h1 className="text-center">Search By Name!</h1>
-                    {/* <Alert
-                        type="danger"
-                        style={{ opacity: this.state.error ? 1 : 0, marginBottom: 10 }}
-                    >
-                        {this.state.error}
-                    </Alert> */}
                     <SearchForm
                         handleFormSubmit={this.handleFormSubmit}
                         handleInputChange={this.handleInputChange}
                         name={this.state.name}
                     />
-                    <SearchResults results={this.state.results} />
+                    <SearchResults employees={this.state.employees} />
                 </Container>
             </div>
         );
